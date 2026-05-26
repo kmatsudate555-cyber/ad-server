@@ -1,4 +1,4 @@
-const MYPAGE_URL = "http://localhost:5173"; // 本番時は変更
+const MYPAGE_URL = "https://ad-server-jade.vercel.app";
 
 // DOM要素
 const viewLoggedIn = document.getElementById("view-loggedin");
