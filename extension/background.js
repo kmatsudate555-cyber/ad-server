@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000"; // 本番時は変更
+const API_BASE = "https://ad-server-production-7eb7.up.railway.app";
 
 // ストレージからトークンを取得するヘルパー
 async function getToken() {
