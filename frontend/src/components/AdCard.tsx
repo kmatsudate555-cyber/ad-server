@@ -10,10 +10,12 @@ interface Props {
 export default function AdCard({ ad, onDelete, onUpdate }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const toMediaUrl = (path?: string | null) =>
-    !path ? null : path.startsWith("http") ? path : `${UPLOADS_BASE}${path}`;
-  const mediaUrl = toMediaUrl(ad.saved_image_path) ?? ad.image_url;
-  const videoUrl = toMediaUrl(ad.saved_video_path) ?? ad.video_url;
+  // R2 設定済み（フルURL）の場合のみ saved_*_path を使用。
+  // それ以外は元の Meta CDN URL にフォールバック。
+  const toMediaUrl = (savedPath?: string | null, originalUrl?: string | null) =>
+    savedPath?.startsWith("http") ? savedPath : (originalUrl ?? null);
+  const mediaUrl = toMediaUrl(ad.saved_image_path, ad.image_url);
+  const videoUrl = toMediaUrl(ad.saved_video_path, ad.video_url);
 
   const savedDate = new Date(ad.saved_at).toLocaleDateString("ja-JP", {
     year: "numeric", month: "short", day: "numeric",
