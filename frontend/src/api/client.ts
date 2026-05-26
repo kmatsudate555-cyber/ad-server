@@ -1,5 +1,10 @@
 const BASE = import.meta.env.VITE_API_URL ?? "/api";
 
+// 本番(Vercel)では /uploads/ が存在しないため Railway URL を直接参照する
+export const UPLOADS_BASE = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "") + "/uploads/"
+  : "/uploads/";
+
 function getToken(): string | null {
   return localStorage.getItem("token");
 }

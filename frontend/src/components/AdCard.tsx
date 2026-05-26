@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SavedAd } from "../api/client";
+import { SavedAd, UPLOADS_BASE } from "../api/client";
 
 interface Props {
   ad: SavedAd;
@@ -11,10 +11,10 @@ export default function AdCard({ ad, onDelete, onUpdate }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const mediaUrl = ad.saved_image_path
-    ? `/uploads/${ad.saved_image_path}`
+    ? `${UPLOADS_BASE}${ad.saved_image_path}`
     : ad.image_url;
   const videoUrl = ad.saved_video_path
-    ? `/uploads/${ad.saved_video_path}`
+    ? `${UPLOADS_BASE}${ad.saved_video_path}`
     : ad.video_url;
 
   const savedDate = new Date(ad.saved_at).toLocaleDateString("ja-JP", {
