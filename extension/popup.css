@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 300px;
+  min-height: 200px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  background: #f8f9fa;
+  color: #212529;
+}
+
+.container {
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.logo {
+  font-size: 24px;
+}
+
+h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1877f2;
+}
+
+.view.hidden {
+  display: none;
+}
+
+/* ログイン済みビュー */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.user-email {
+  font-size: 12px;
+  color: #6c757d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 170px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #e8f0fe;
+  color: #1877f2;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+  line-height: 1.5;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* 認証ビュー */
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 12px;
+  background: #e9ecef;
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.tab {
+  flex: 1;
+  padding: 7px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  background: #fff;
+  color: #1877f2;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form.hidden {
+  display: none;
+}
+
+input {
+  padding: 10px 12px;
+  border: 1.5px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+input:focus {
+  border-color: #1877f2;
+}
+
+/* ボタン */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #1877f2;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #166fe5;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #6c757d;
+  border: 1.5px solid #dee2e6;
+}
+
+.btn-ghost:hover {
+  background: #f8f9fa;
+}
+
+.error {
+  font-size: 12px;
+  color: #dc3545;
+  padding: 6px 10px;
+  background: #fff5f5;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+}
+
+.error.hidden {
+  display: none;
+}

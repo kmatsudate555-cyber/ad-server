@@ -1,0 +1,45 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from database import engine, Base
+import models  # noqa: F401 - モデル登録のためimport
+from routers import auth, ads
+
+# DBテーブル自動作成
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="Ad Saver API", version="1.0.0")
+
+# CORS（Chrome拡張からのリクエストを許可）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 本番では拡張機能のoriginに絞る
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ルーター
+app.include_router(auth.router)
+app.include_router(ads.router)
+
+# アップロードファイルの静的配信
+upload_dir = Path(os.getenv("UPLOAD_DIR", "./uploads"))
+upload_dir.mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
+
+
+@app.get("/")
+def root():
+    return {"message": "Ad Saver API is running"}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

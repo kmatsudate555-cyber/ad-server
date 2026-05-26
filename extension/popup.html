@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ad Saver</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="logo">&#128190;</span>
+      <h1>Ad Saver</h1>
+    </div>
+
+    <!-- ログイン済み表示 -->
+    <div id="view-loggedin" class="view hidden">
+      <div class="user-info">
+        <div class="user-email" id="user-email"></div>
+        <div class="badge" id="saved-count">読み込み中...</div>
+      </div>
+      <div class="actions">
+        <a id="mypage-link" href="#" target="_blank" class="btn btn-primary">
+          &#128193; マイページを開く
+        </a>
+        <button id="logout-btn" class="btn btn-ghost">ログアウト</button>
+      </div>
+      <div class="hint">
+        Meta広告ライブラリを開くと<br />各広告に「保存」ボタンが表示されます
+      </div>
+    </div>
+
+    <!-- 未ログイン表示 -->
+    <div id="view-auth" class="view">
+      <!-- タブ切り替え -->
+      <div class="tabs">
+        <button class="tab active" data-tab="login">ログイン</button>
+        <button class="tab" data-tab="register">新規登録</button>
+      </div>
+
+      <!-- ログインフォーム -->
+      <div id="form-login" class="form">
+        <input type="email" id="login-email" placeholder="メールアドレス" autocomplete="email" />
+        <input type="password" id="login-password" placeholder="パスワード" autocomplete="current-password" />
+        <button id="login-btn" class="btn btn-primary">ログイン</button>
+        <div id="login-error" class="error hidden"></div>
+      </div>
+
+      <!-- 登録フォーム -->
+      <div id="form-register" class="form hidden">
+        <input type="text" id="reg-name" placeholder="表示名（任意）" />
+        <input type="email" id="reg-email" placeholder="メールアドレス" autocomplete="email" />
+        <input type="password" id="reg-password" placeholder="パスワード（8文字以上）" autocomplete="new-password" />
+        <button id="register-btn" class="btn btn-primary">登録して始める</button>
+        <div id="register-error" class="error hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
