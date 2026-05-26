@@ -29,10 +29,15 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(ads.router)
 
-# アップロードファイルの静的配信
-upload_dir = Path(os.getenv("UPLOAD_DIR", "./uploads"))
-upload_dir.mkdir(exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
+# アップロードファイルの静的配信（R2 未設定の開発環境のみ）
+_r2_configured = all([
+    os.getenv("R2_ACCOUNT_ID"), os.getenv("R2_ACCESS_KEY_ID"),
+    os.getenv("R2_SECRET_ACCESS_KEY"), os.getenv("R2_BUCKET_NAME"),
+])
+if not _r2_configured:
+    upload_dir = Path(os.getenv("UPLOAD_DIR", "./uploads"))
+    upload_dir.mkdir(exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 
 
 @app.get("/")

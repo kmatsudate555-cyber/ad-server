@@ -5,26 +5,21 @@ from typing import Optional, List
 import httpx
 import os
 import uuid
-from pathlib import Path
 
 from database import get_db
 import models
 import schemas
 from auth import get_current_user
+import storage
 
 router = APIRouter(prefix="/api/ads", tags=["ads"])
 
-UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "./uploads"))
-UPLOAD_DIR.mkdir(exist_ok=True)
 MAX_SIZE = int(os.getenv("MAX_UPLOAD_SIZE_MB", "50")) * 1024 * 1024
 
 
 async def download_and_save(url: str, subdir: str, ad_id: str) -> Optional[str]:
-    """URLからメディアをダウンロードしてサーバーに保存する"""
+    """URLからメディアをダウンロードしてストレージ（R2 or ローカル）に保存する"""
     try:
-        target_dir = UPLOAD_DIR / subdir
-        target_dir.mkdir(exist_ok=True)
-
         async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
             response = await client.get(url)
             if response.status_code != 200:
@@ -34,7 +29,6 @@ async def download_and_save(url: str, subdir: str, ad_id: str) -> Optional[str]:
             if len(content) > MAX_SIZE:
                 return None
 
-            # 拡張子を推定
             content_type = response.headers.get("content-type", "")
             if "video" in content_type:
                 ext = ".mp4"
@@ -45,11 +39,8 @@ async def download_and_save(url: str, subdir: str, ad_id: str) -> Optional[str]:
             else:
                 ext = ".jpg"
 
-            filename = f"{ad_id}{ext}"
-            file_path = target_dir / filename
-            file_path.write_bytes(content)
-
-            return str(file_path.relative_to(UPLOAD_DIR))
+            key = f"{subdir}/{ad_id}{ext}"
+            return storage.upload_bytes(content, key, content_type or "application/octet-stream")
     except Exception:
         return None
 
@@ -196,13 +187,11 @@ def delete_ad(
     if not ad:
         raise HTTPException(status_code=404, detail="広告が見つかりません")
 
-    # ローカルファイルも削除
+    # ストレージからも削除（R2 またはローカル）
     for path_attr in ["saved_image_path", "saved_video_path"]:
-        rel_path = getattr(ad, path_attr)
-        if rel_path:
-            full_path = UPLOAD_DIR / rel_path
-            if full_path.exists():
-                full_path.unlink()
+        path_or_url = getattr(ad, path_attr)
+        if path_or_url:
+            storage.delete_file(path_or_url)
 
     db.delete(ad)
     db.commit()
