@@ -53,6 +53,7 @@ export interface SavedAd {
   account_url?: string;
   post_url?: string;
   detail_url?: string;
+  cta_url?: string;
   image_url?: string;
   video_url?: string;
   saved_image_path?: string;

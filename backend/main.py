@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -13,6 +14,14 @@ from routers import auth, ads
 
 # DBテーブル自動作成
 Base.metadata.create_all(bind=engine)
+
+# 既存テーブルへのカラム追加マイグレーション
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE saved_ads ADD COLUMN cta_url TEXT"))
+        conn.commit()
+    except Exception:
+        pass  # カラムが既に存在する場合はスキップ
 
 app = FastAPI(title="Ad Saver API", version="1.0.0")
 

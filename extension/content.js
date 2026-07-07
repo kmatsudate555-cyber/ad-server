@@ -2,6 +2,7 @@
 console.log("[Ad Saver] Content script loaded ✓");
 
 let isLoggedIn = false;
+let scannedAds = []; // スキャン結果キャッシュ（フィルター用）
 
 chrome.runtime.sendMessage({ type: "GET_AUTH_STATE" }, (res) => {
   isLoggedIn = res?.isLoggedIn || false;
@@ -19,10 +20,14 @@ function createFloatingPanel() {
       <span id="ad-saver-count">-</span>
     </div>
     <button id="ad-saver-scan-btn">広告を検索</button>
+    <input type="text" id="ad-saver-filter" placeholder="広告主を絞る..." style="display:none;width:100%;box-sizing:border-box;margin-top:6px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;outline:none;" />
     <div id="ad-saver-list"></div>
   `;
   document.body.appendChild(panel);
   document.getElementById("ad-saver-scan-btn").addEventListener("click", scanAds);
+  document.getElementById("ad-saver-filter").addEventListener("input", (e) => {
+    renderFilteredAds(e.target.value.trim());
+  });
   makeDraggable(panel, document.getElementById("ad-saver-header"));
 }
 
@@ -67,6 +72,7 @@ function makeDraggable(panel, handle) {
 function scanAds() {
   const list = document.getElementById("ad-saver-list");
   const countEl = document.getElementById("ad-saver-count");
+  const filterEl = document.getElementById("ad-saver-filter");
   list.innerHTML = "<div style='padding:8px;color:#666;font-size:12px;'>スキャン中...</div>";
 
   const cards = findAdCards();
@@ -74,14 +80,37 @@ function scanAds() {
 
   if (cards.length === 0) {
     list.innerHTML = "<div style='padding:8px;color:#666;font-size:12px;'>広告が見つかりません。<br>スクロールして広告を表示してからもう一度押してください。</div>";
+    filterEl.style.display = "none";
     return;
   }
 
+  scannedAds = cards.map((card, i) => ({ data: extractAdData(card), index: i }));
+  filterEl.value = "";
+  filterEl.style.display = "block";
+  renderFilteredAds("");
+}
+
+function renderFilteredAds(query) {
+  const list = document.getElementById("ad-saver-list");
+  const countEl = document.getElementById("ad-saver-count");
+
+  const filtered = query
+    ? scannedAds.filter(({ data }) =>
+        (data.advertiser_name || "").toLowerCase().includes(query.toLowerCase())
+      )
+    : scannedAds;
+
+  countEl.textContent = query
+    ? `${filtered.length}/${scannedAds.length}件`
+    : `${scannedAds.length}件`;
+
   list.innerHTML = "";
-  cards.forEach((card, i) => {
-    const adData = extractAdData(card);
-    const item = createAdItem(adData, i);
-    list.appendChild(item);
+  if (filtered.length === 0) {
+    list.innerHTML = "<div style='padding:8px;color:#666;font-size:12px;'>該当する広告主が見つかりません。</div>";
+    return;
+  }
+  filtered.forEach(({ data, index }) => {
+    list.appendChild(createAdItem(data, index));
   });
 }
 
@@ -252,6 +281,25 @@ function extractAdData(card) {
     }
   }
 
+  // CTAボタンの遷移先URL（詳細を表示・もっと見る等の外部リンク）
+  const ctaKeywords = [
+    "詳細を表示", "もっと見る", "今すぐ購入", "申し込む", "ダウンロード",
+    "インストール", "予約する", "お問い合わせ", "登録する", "購入する",
+    "Learn More", "Shop Now", "Sign Up", "Download", "Install",
+    "Book Now", "Contact Us", "Subscribe", "Get Offer", "Watch More",
+    "Apply Now", "Get Quote",
+  ];
+  let ctaUrl = null;
+  for (const link of allLinks) {
+    const linkText = link.innerText?.trim() || "";
+    const href = link.href;
+    if (!href || href.includes("facebook.com") || href.includes("instagram.com")) continue;
+    if (ctaKeywords.some((kw) => linkText.includes(kw))) {
+      ctaUrl = href;
+      break;
+    }
+  }
+
   return {
     page_url: window.location.href,
     ad_id: libraryId,
@@ -263,6 +311,7 @@ function extractAdData(card) {
     video_url: videoUrl,
     post_url: postUrl,
     detail_url: detailUrl,
+    cta_url: ctaUrl,
     tags: [],
   };
 }

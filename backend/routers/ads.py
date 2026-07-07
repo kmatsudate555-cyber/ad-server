@@ -65,6 +65,7 @@ async def save_ad(
         page_url=body.page_url,
         post_url=body.post_url,
         detail_url=body.detail_url,
+        cta_url=body.cta_url,
         image_url=body.image_url,
         video_url=body.video_url,
         tags=body.tags or [],

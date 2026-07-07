@@ -45,6 +45,7 @@ class SaveAdRequest(BaseModel):
     account_url: Optional[str] = None
     post_url: Optional[str] = None
     detail_url: Optional[str] = None
+    cta_url: Optional[str] = None
     image_url: Optional[str] = None
     video_url: Optional[str] = None
     tags: Optional[List[str]] = []
@@ -66,6 +67,7 @@ class SavedAdOut(BaseModel):
     account_url: Optional[str] = None
     post_url: Optional[str] = None
     detail_url: Optional[str] = None
+    cta_url: Optional[str] = None
     image_url: Optional[str] = None
     video_url: Optional[str] = None
     saved_image_path: Optional[str] = None

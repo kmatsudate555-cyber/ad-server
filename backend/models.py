@@ -41,6 +41,7 @@ class SavedAd(Base):
     account_url = Column(Text, nullable=True)  # 広告主のFacebookページURL
     post_url = Column(Text, nullable=True)     # https://www.facebook.com/[id]/posts/[id]/
     detail_url = Column(Text, nullable=True)   # 広告ライブラリ詳細ページ
+    cta_url = Column(Text, nullable=True)      # 広告CTAボタンの遷移先URL
 
     # メディア（元URL）
     image_url = Column(Text, nullable=True)
