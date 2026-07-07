@@ -178,6 +178,21 @@ function AdModal({ ad, mediaUrl, videoUrl, onClose, onDelete, onUpdate }: {
                   <span style={s.infoVal}>{ad.start_date}</span>
                 </div>
               )}
+              {ad.cta_url && (
+                <div style={s.infoRow}>
+                  <span style={s.infoLabel}>遷移先</span>
+                  <a
+                    href={ad.cta_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ ...s.infoVal, color: "#1877f2", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}
+                    title={ad.cta_url}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    {new URL(ad.cta_url).hostname}
+                  </a>
+                </div>
+              )}
               <div style={s.infoRow}>
                 <span style={s.infoLabel}>保存日</span>
                 <span style={s.infoVal}>
@@ -237,6 +252,11 @@ function AdModal({ ad, mediaUrl, videoUrl, onClose, onDelete, onUpdate }: {
 
             {/* アクション */}
             <div style={s.modalActions}>
+              {ad.cta_url && (
+                <a href={ad.cta_url} target="_blank" rel="noopener noreferrer" style={s.ctaBtn}>
+                  遷移先を開く
+                </a>
+              )}
               {externalUrl && (
                 <a href={externalUrl} target="_blank" rel="noopener noreferrer" style={s.linkBtn}>
                   🔗 元の広告を開く
@@ -450,6 +470,14 @@ const s: Record<string, React.CSSProperties> = {
     marginTop: "auto", paddingTop: 12,
     borderTop: "1px solid #f0f2f5",
     flexWrap: "wrap" as const,
+  },
+  ctaBtn: {
+    flex: 1, padding: "8px 12px",
+    background: "#1877f2", color: "#fff",
+    border: "none", borderRadius: 8,
+    fontSize: 12, fontWeight: 700,
+    cursor: "pointer", textDecoration: "none",
+    textAlign: "center" as const,
   },
   linkBtn: {
     flex: 1, padding: "8px 12px",
