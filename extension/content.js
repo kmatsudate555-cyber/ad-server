@@ -293,8 +293,19 @@ function extractAdData(card) {
   for (const link of allLinks) {
     const linkText = link.innerText?.trim() || "";
     const href = link.href;
-    if (!href || href.includes("facebook.com") || href.includes("instagram.com")) continue;
-    if (ctaKeywords.some((kw) => linkText.includes(kw))) {
+    if (!href) continue;
+    if (!ctaKeywords.some((kw) => linkText.includes(kw))) continue;
+
+    // Facebook リダイレクトURL（l.facebook.com/l.php?u=実際のURL）から遷移先を抽出
+    if (href.includes("/l.php")) {
+      try {
+        const dest = new URL(href).searchParams.get("u");
+        if (dest) { ctaUrl = decodeURIComponent(dest); break; }
+      } catch {}
+    }
+
+    // 外部リンクはそのまま使用
+    if (!href.includes("facebook.com") && !href.includes("instagram.com")) {
       ctaUrl = href;
       break;
     }

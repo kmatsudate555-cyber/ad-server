@@ -252,8 +252,8 @@ function AdModal({ ad, mediaUrl, videoUrl, onClose, onDelete, onUpdate }: {
 
             {/* アクション */}
             <div style={s.modalActions}>
-              {(ad.cta_url || externalUrl) && (
-                <a href={ad.cta_url || externalUrl!} target="_blank" rel="noopener noreferrer" style={s.linkBtn}>
+              {ad.cta_url && (
+                <a href={ad.cta_url} target="_blank" rel="noopener noreferrer" style={s.linkBtn}>
                   🔗 広告の遷移先を開く
                 </a>
               )}
